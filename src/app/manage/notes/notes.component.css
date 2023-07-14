@@ -1,0 +1,49 @@
+.container {
+  margin-top: 50px;
+}
+.textarea {
+  height: 150px;
+}
+.list-group-item{
+  margin-bottom: 10px;
+}
+.btn {
+  margin-top: 10px;
+}
+.card,
+.card-input {
+  position: relative;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+.card:hover {
+  transform: translateY(-5px);
+}
+.card-title {
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+}
+.card-text {
+  color: #777;
+}
+.delete-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-weight: bold;
+  font-size: 16px;
+  color: #999;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  color: #ff0000;
+}

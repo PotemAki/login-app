@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="container-fluid">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-mdb-toggle="collapse"
+      data-mdb-target="#navbarCenteredExample"
+      aria-controls="navbarCenteredExample"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div
+      class="collapse navbar-collapse justify-content-start justify-content-lg-center"
+      id="navbarCenteredExample">
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLinkActive="active" routerLink="main">Home</a>
+        </li>
+        <li class="nav-item" *ngIf="!isAuthenticated">
+          <a class="nav-link" routerLinkActive="active" routerLink="auth">Login</a>
+        </li>
+        <li class="nav-item" *ngIf="isAuthenticated">
+          <a class="nav-link" routerLinkActive="active" routerLink="manage">Note+</a>
+        </li>
+      </ul>
+    </div>
+    <ul class="navbar-nav ms-auto" *ngIf="isAuthenticated">
+      <li class="nav-item" ngbDropdown display="dynamic" placement="bottom-end">
+        <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown3" role="button">
+          {{ userLogin }}</a>
+        <div ngbDropdownMenu aria-labelledby="navbarDropdown3" class="dropdown-menu">
+          <a ngbDropdownItem style="cursor: pointer;" (click)="onSettings()">Settings</a>
+          <a ngbDropdownItem style="cursor: pointer;"(click)="onLogout()">Logout</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+
+
+
+
+	
+			
+	
+

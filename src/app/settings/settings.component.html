@@ -1,0 +1,95 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h1>Update Profile</h1>
+        <div class="form-group mb-4">
+          <label class="form-label" for="email">Email</label>
+          <input 
+            type="email" 
+            class="form-control" 
+            id="email" 
+            name="email"
+            [(ngModel)]="userEmail"
+            [value]="userEmail"
+            disabled="true">
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label" for="username">User Name</label>
+          <input 
+            type="text" 
+            class="form-control" 
+            id="username"
+            name="username"
+            required
+            [(ngModel)]="userName"
+            >
+        </div>
+        <button class="btn btn-primary btn-block mb-4" 
+        (click)="updateName()">
+          Change name</button>
+        <form (ngSubmit)="changePassword(f)" #f="ngForm">
+        <div *ngIf="!isChangingPassword">
+          <div class="form-group mb-4">
+            <label class="form-label" for="password">Password</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              id="currPassword"
+              name="currPassword"
+              ngModel
+              required
+              placeholder="Enter your current password">
+          </div>
+         <button class="btn btn-primary btn-block mb-4" type="submit">Change password</button>
+         <div class="alert alert-danger" *ngIf="error">
+          <p>{{error}}</p>
+        </div>
+        </div>
+        </form>
+        
+        <div *ngIf="isChangingPassword">
+          <form (ngSubmit)="updatePassword(u)" #u="ngForm">
+          <div class="form-group mb-2">
+            <label class="form-label" for="password">New password</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              id="newPassword"
+              name="newPassword"
+              ngModel
+              required
+              minlength="6"
+              #newPassword="ngModel">
+          </div>
+          <div class="form-group mb-2">
+            <label class="form-label" for="password">Confirm password</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              id="repeatNewPassword"
+              name="repeatNewPassword"
+              ngModel
+              required
+              minlength="6"
+              #repeatNewPassword="ngModel">
+          </div>
+
+         <button class="btn btn-primary btn-block mb-4" style="margin-right: 10px;" type="submit" [disabled]="!u.valid || !passwordsMatch(newPassword.value, repeatNewPassword.value)">Update</button>
+         <button class="btn btn-danger btn-block mb-4" 
+          (click)="cancelChangePassword()">Cancel</button>
+          
+          <p class="help-block" 
+          *ngIf="(!newPassword.valid && newPassword.touched) || (!repeatNewPassword.valid && repeatNewPassword.touched) ">Password needs to be atlesat 6 characters long!</p>
+        <p class="help-block" 
+          *ngIf="!passwordsMatch(newPassword.value, repeatNewPassword.value) && repeatNewPassword.touched">Password doesn't match!</p>
+
+        </form>
+        <div class="alert alert-danger" *ngIf="error">
+          <p>{{error}}</p>
+        </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isLoading" style="text-align: center;">
+  <app-spinner></app-spinner>
+</div>

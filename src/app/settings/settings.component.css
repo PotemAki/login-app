@@ -1,0 +1,19 @@
+.container {
+  margin-top: 50px;
+}
+
+.col-md-6 {
+  margin-left: auto;
+  margin-right: 0;
+}
+h1 {
+  margin-bottom: 30px;
+}
+
+input.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+.help-block {
+  font-weight: bold;
+  color: red;
+}

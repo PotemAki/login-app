@@ -1,0 +1,31 @@
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  min-height: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+.card-img-top {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-title {
+  color: #333;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.card-text {
+  color: #777;
+}
+
+.container {
+  padding-top: 40px;
+}

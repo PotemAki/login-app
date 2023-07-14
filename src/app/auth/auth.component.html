@@ -1,0 +1,186 @@
+
+<div *ngIf="isLoading" style="text-align: center;">
+  <app-spinner></app-spinner>
+</div>
+<!-- error msg -->
+<div class="alert alert-danger" *ngIf="error">
+  <p>{{error}}</p>
+</div>
+<div *ngIf="!isLoading">
+<div class="row d-flex justify-content-center">
+  <div id="auth-element" class="col-md-6">
+<ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="tab-login" role="tab" [ngClass]="{active: isLogin}" 
+    (click)="tabLogin()">Login</a>
+  </li>
+  <li class="nav-item" role="presentation">
+    <a class="nav-link" id="tab-register" role="tab" [ngClass]="{active: !isLogin}"
+    (click)="tabRegister()">Register</a>
+  </li>
+</ul>
+<div class="tab-content">
+  <!-- login -->
+  <div *ngIf="isLogin">
+    <form (ngSubmit)="onSubmitLogin(f)" #f="ngForm">
+      <div class="form-group mb-4">
+        <label class="form-label" for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          class="form-control" 
+          ngModel 
+          name="email"
+          required
+          email
+          #email="ngModel">
+          <span class="help-block" *ngIf="!email.valid && email.touched">Please enter a correct email!</span>
+      </div>
+      <div class="form-group mb-4">
+        <label class="form-label" for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="form-control"
+          ngModel 
+          name="password"
+          required
+          minlength="6"
+          #password="ngModel">
+          <span class="help-block" *ngIf="!password.valid && password.touched">Password needs to be atlesat 6 characters long!</span>
+      </div>
+
+      <div class="row mb-4">
+        <div class="col-md-6 d-flex justify-content-center">
+        </div>
+        <div class="col-md-6 d-flex justify-content-center">
+          <a class="active" id="tab-link" (click)="onReset()">Forgot password?</a>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block mb-4" [disabled]="!f.valid">
+        Sign in</button>
+      <div class="text-center">
+        <p>Not a member? <a class="active" id="tab-link" (click)="tabRegister()">Register</a></p>
+      </div>
+    </form>
+  </div>
+  <!-- register -->
+  <div *ngIf="!isLogin">
+    <form (ngSubmit)="onSubmitSignUp(r)" #r="ngForm">
+      <div class="form-outline mb-4">
+        <label class="form-label" for="registerUsername">Username</label>
+        <input 
+          type="text" 
+          id="registerUsername" 
+          class="form-control" 
+          ngModel
+          name="registerUsername"
+          required
+          #login="ngModel">
+          <span class="help-block" *ngIf="!login.valid && login.touched">This field cannot be empty!</span>
+      </div>
+      <div class="form-outline mb-4">
+        <label class="form-label" for="registerEmail">Email</label>
+        <input 
+          type="email" 
+          id="registerEmail" 
+          class="form-control"
+          ngModel
+          name="registerEmail"
+          required
+          #registerEmail="ngModel">
+          <span class="help-block" *ngIf="!registerEmail.valid && registerEmail.touched">Please enter a correct email!</span>
+      </div>
+      <div class="form-outline mb-4">
+        <label class="form-label" for="registerPassword">Password</label>
+        <input [ngClass]="{invalid: !passwordsMatch() && (registerPassword.touched || registerRepeatPassword.touched )}"
+          type="password" 
+          id="registerPassword" 
+          class="form-control"
+          [(ngModel)]="registerPasswordValue"
+          ngModel 
+          name="registerPassword"
+          required
+          minlength="6"
+          #registerPassword="ngModel">
+      </div>
+      <div class="form-outline mb-4">
+        <label class="form-label" for="registerRepeatPassword">Repeat password</label>
+        <input [ngClass]="{invalid: !passwordsMatch() && (registerRepeatPassword.touched )}"
+          type="password" 
+          id="registerRepeatPassword" 
+          class="form-control"
+          [(ngModel)]="registerRepeatPasswordValue"
+          ngModel 
+          name="registerRepeatPassword"
+          required
+          minlength="6"
+          #registerRepeatPassword="ngModel">
+          <span class="help-block" 
+            *ngIf="(!registerPassword.valid && registerPassword.touched) || (!registerRepeatPassword.valid && registerRepeatPassword.touched) ">Password needs to be atlesat 6 characters long!</span>
+          <p class="help-block" 
+            *ngIf="!passwordsMatch() && registerRepeatPassword.touched">Password doesn't match!</p>
+      </div>
+
+      <!-- Checkbox -->
+      <div class="text-center">
+        <p><a class="active" id="tab-link" (click)="openConditions()">Read the Terms & Conditions</a></p>
+      </div>
+      <div class="form-check d-flex justify-content-center mb-4">
+        <input 
+          class="form-check-input me-2" 
+          type="checkbox" 
+          value="" 
+          id="registerCheck"
+          ngModel
+          name="registerCheck"
+          required>
+        <label class="form-check-label" for="registerCheck">
+          I have read and agree to the terms
+        </label>
+      </div>  
+      <p class="help-block" style="color: red; font-weight: bold;" 
+      *ngIf="((login.valid && registerEmail.valid && registerPassword.valid &&  registerRepeatPassword.valid) && !r.valid) ">You need agree to terms and conditions!</p>
+
+      <!-- Submit button -->
+      <button type="submit" class="btn btn-primary btn-block mb-3" [disabled]="!r.valid || !passwordsMatch()">Sign up</button>
+    </form>
+  </div>
+</div>
+  </div>
+</div>
+<!-- conditions -->
+<div class="popup-container" [hidden]="!showPopup">
+  <div class="popup-content">
+    <app-conditions></app-conditions>
+    <button class="btn btn-danger" (click)="closeConditions()">Close</button>
+  </div>
+</div>
+<!-- reset password -->
+<div class="popup-container" [hidden]="forgotPassword">
+  <div class="reset-content">
+    <h4>Please provide us with correct email.</h4>
+    <p>Link to reset your password will be provided if email is correct.</p>
+    <form (ngSubmit)="sendReset(reset)" #reset="ngForm">
+    <label class="form-label" for="email">Email</label>
+    <input 
+      type="email" 
+      id="emailR" 
+      class="form-control" 
+      ngModel 
+      name="emailR"
+      required
+      email
+      #emailR="ngModel">
+      <p class="help-block" *ngIf="!emailR.valid && emailR.touched">Please enter a correct email!</p>
+    <button class="btn btn-success" [disabled]="!emailR.valid" type="submit" [disabled]="!reset.valid">Send</button>
+    <button class="btn btn-danger" type="button" (click)="onReset()">Close</button>
+    <div class="alert alert-danger" *ngIf="errorEmail">
+      <p>{{errorEmail}}</p>
+    </div>
+    </form>
+  </div>
+</div>
+</div>
+

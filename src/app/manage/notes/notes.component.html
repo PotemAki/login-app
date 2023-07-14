@@ -1,0 +1,48 @@
+
+<div class="container">
+  <h1>Hello, {{displayName}}</h1>
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <form (ngSubmit)="addNote()" #f="ngForm">
+        <div class="form-group">
+          <label for="noteTitle" class="card-title">Title</label>
+          <input 
+            type="text" 
+            class="form-control card-input" 
+            id="noteTitle"
+            name="title"
+            [(ngModel)]="newNote.title" 
+            maxlength="30"
+            required
+            placeholder="Put your title here!">
+        </div>
+
+        <div class="form-group">
+          <label for="noteContent" class="card-title">Content</label>
+          <textarea 
+            class="form-control textarea card-input" 
+            name="content"
+            [(ngModel)]="newNote.content" 
+            maxlength="300"
+            required
+            placeholder="Your note requires content & title.">
+          </textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="!f.valid">Add Note</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <ul class="">
+        <li *ngFor="let note of notes; let i = index" class="list-group-item">
+          <div class="card">
+            <button class="delete-button"(click)="deleteNote(i)">X</button>
+            <h4 class="card-title">{{ note.title }}</h4>
+            <p class="card-text">{{ note.content }}</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
