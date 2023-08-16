@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { BehaviorSubject, throwError } from "rxjs";
-import { User } from "./user.model";
+import { User, UserPhoto } from "./user.model";
 import { catchError, tap } from "rxjs/operators";
 import { Router } from "@angular/router";
+import { environment } from "src/environments/environment.development";
 
 interface AuthResponseData{
   kind: string;
@@ -14,16 +15,23 @@ interface AuthResponseData{
   localId: string;
   registered?: boolean
   displayName: string;
+  profileUrl: string;
+  users: object;
 }
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
   user = new BehaviorSubject<User>(null);
+  userPhoto = new BehaviorSubject<UserPhoto>(null);
   private tokenExpirationTimer: any;
+  currentUrl;
+  defaultUrl = 'https://firebasestorage.googleapis.com/v0/b/login-app-fefb2.appspot.com/o/pic%2Fdefault-profile-pic.png?alt=media&token=20ed6cab-d3d4-40eb-b541-fb2ba6d8834d'
+  
 
   constructor (private http: HttpClient, private router: Router) { }
 
   autoLogin() {
+    this.autoLoginPhoto()
     const userDataString = localStorage.getItem('userData');
     if (!userDataString) {
       return
@@ -43,7 +51,7 @@ export class AuthService {
       userData.email,
       userData.id,
       userData._token,
-      new Date (userData._tokenExpirationDate)
+      new Date (userData._tokenExpirationDate),
     )
     if (loadedUser.token) {
       this.user.next(loadedUser)
@@ -73,7 +81,7 @@ export class AuthService {
       userData.email,
       userData.id,
       userData._token,
-      new Date (userData._tokenExpirationDate)
+      new Date (userData._tokenExpirationDate),
     )
     if (loadedUser.token) {
       this.user.next(loadedUser)
@@ -84,13 +92,54 @@ export class AuthService {
     }
     localStorage.setItem('userData', JSON.stringify(loadedUser))
   }
+  updatePicture(profileUrl: string) {
+    const userDataStringPhoto = localStorage.getItem('userDataPhoto')
+    if (!userDataStringPhoto) {
+      return
+    }
+    const userPhoto = new UserPhoto(profileUrl)
+    this.userPhoto.next(userPhoto)
+    localStorage.setItem('userDataPhoto', JSON.stringify(userPhoto))
+  }
+  getUserPic(idToken: string) {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + environment.fireBaseAPIKey, {
+    idToken: idToken
+  }).pipe(catchError(this.handleError)).subscribe( resData => {
+    const photoUrl = resData.users[0].photoUrl;
+    if (!photoUrl) {
+      const userPhoto = new UserPhoto(this.defaultUrl)
+      this.userPhoto.next(userPhoto)
+      localStorage.setItem('userDataPhoto', JSON.stringify(userPhoto))
+    } else {
+      const userPhoto = new UserPhoto(photoUrl)
+      this.userPhoto.next(userPhoto)
+      localStorage.setItem('userDataPhoto', JSON.stringify(userPhoto))
+    }
+  })
+  }
+  autoLoginPhoto() {
+    const userDataPhotoString = localStorage.getItem('userDataPhoto');
+    if (!userDataPhotoString) {
+      return
+    }
+    const userDataPhoto: {
+      profileUrl: string
+    } = JSON.parse(userDataPhotoString);
+    if (!userDataPhoto) {
+      return
+    }
+    const loadedUserPhoto = new UserPhoto(
+      userDataPhoto.profileUrl
+    )
+    this.userPhoto.next(loadedUserPhoto)
+  }
 
   signup(name: string, email: string, password: string) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBViC9h0rCzYyBJpvkHxvTjS3XwIiWVe1A', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + environment.fireBaseAPIKey, {
       displayName: name,
       email: email,
       password: password,
-      returnSecureToken: true
+      returnSecureToken: true,
     }).pipe(catchError(this.handleError), tap(resData => {
       this.handleAuth(
         resData.displayName,
@@ -102,7 +151,7 @@ export class AuthService {
     }))
   }
   login(email: string, password: string) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBViC9h0rCzYyBJpvkHxvTjS3XwIiWVe1A', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.fireBaseAPIKey, {
       email: email,
       password: password,
       returnSecureToken: true
@@ -120,6 +169,7 @@ export class AuthService {
     this.user.next(null)
     this.router.navigate(['/auth'])
     localStorage.removeItem('userData')
+    localStorage.removeItem('userDataPhoto')
     if (this.tokenExpirationTimer) {
       clearTimeout(this.tokenExpirationTimer);
     }
@@ -132,7 +182,7 @@ export class AuthService {
     }, expirationDuration)
   }
   authPassword(email, password) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBViC9h0rCzYyBJpvkHxvTjS3XwIiWVe1A', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.fireBaseAPIKey, {
       email: email,
       password: password,
       returnSecureToken: true
@@ -140,14 +190,13 @@ export class AuthService {
   }
   
   resetPassword(email: string) {
-    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBViC9h0rCzYyBJpvkHxvTjS3XwIiWVe1A', {
+    return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=' + environment.fireBaseAPIKey, {
       email: email,
       requestType: 'PASSWORD_RESET'
     }).pipe(catchError(this.handleError))
   }
 
   private handleAuth(displayName: string, email: string, userId: string, token: string, expiresIn: number) {
-
     const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000)
     const user = new User(displayName, email, userId, token, expirationDate)
     this.user.next(user)

@@ -1,11 +1,40 @@
 .container {
   margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+.row {
+  width: 100%;
+  justify-content: space-around;
+}
+.image-part {
+  display: flex;
+  flex-direction: column;
+}
+.image-preview {
+  width: 400px;
+  margin: 15px 2px;
+}
+.image-preview img {
+  width: 100%;
+  box-shadow: 2px 1px 8px 0px rgba(0, 0, 0, 0.5);
+
+}
+.buttons{
+  margin-top: 20px;
+  display: flex;
+  
+}
+.input-button-group{
+  width: 120px;
+}
+.input-button:hover{
+  background-color: rgb(250, 250, 250);
+}
+.input-button:active{
+  opacity: 0.6;
 }
 
-.col-md-6 {
-  margin-left: auto;
-  margin-right: 0;
-}
 h1 {
   margin-bottom: 30px;
 }
@@ -16,4 +45,11 @@ input.ng-invalid.ng-touched {
 .help-block {
   font-weight: bold;
   color: red;
+}
+.file-input{
+  visibility: hidden;
+}
+.settings-page{
+  display: flex;
+  flex-direction: column;
 }

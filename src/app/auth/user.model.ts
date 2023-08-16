@@ -4,7 +4,8 @@ export class User {
     public email: string,
     public id: string,
     private _token: string, 
-    private _tokenExpirationDate: Date) {
+    private _tokenExpirationDate: Date,
+    public profileUrl?: string) {
 
     }
   
@@ -14,4 +15,10 @@ export class User {
     }
     return this._token
   }
+}
+
+export class UserPhoto {
+  constructor (
+    public profileUrl: string) { }
+  
 }

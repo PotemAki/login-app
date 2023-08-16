@@ -26,6 +26,9 @@
       </ul>
     </div>
     <ul class="navbar-nav ms-auto" *ngIf="isAuthenticated">
+      <div class="profile-pic">
+        <img class="user-photo" [src]="userPhoto">
+      </div>
       <li class="nav-item" ngbDropdown display="dynamic" placement="bottom-end">
         <a class="nav-link" tabindex="0" ngbDropdownToggle id="navbarDropdown3" role="button">
           {{ userLogin }}</a>

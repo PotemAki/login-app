@@ -11,7 +11,9 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit, OnDestroy {
   isAuthenticated = false;
   private userSub!: Subscription;
+  private userSubPhoto!: Subscription
   userLogin: string = ''
+  userPhoto: string = 'assets/blank.png'
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -26,6 +28,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.userLogin = '';
       }
     })
+    this.userSubPhoto = this.authService.userPhoto.subscribe(userPhoto => {
+      if (userPhoto) {
+        this.userPhoto = userPhoto.profileUrl
+      } else {
+        this.userPhoto = 'assets/blank.png'
+      }
+    })
   }
   onLogout() {
     this.authService.logout()
@@ -37,6 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   
   ngOnDestroy() {
     this.userSub.unsubscribe;
+    this.userSubPhoto.unsubscribe
   }
 
 }

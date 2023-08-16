@@ -19,7 +19,6 @@ export class AuthComponent {
   error: string = ''
   errorEmail: string = '';
   
-  
   constructor(private router: Router, private authService: AuthService) {
 
   }
@@ -66,6 +65,7 @@ export class AuthComponent {
     this.authService.login(email, password).subscribe(
       resData => {
         this.isLoading = false;
+        this.authService.getUserPic(resData.idToken)
         this.router.navigate(['/main'])
       }, errorMessage => {
         this.error = errorMessage
@@ -87,6 +87,7 @@ export class AuthComponent {
     this.authService.signup(name, email, password).subscribe(
       resData => {
         this.isLoading = false;
+        this.authService.getUserPic(resData.idToken)
         this.router.navigate(['/main'])
       },errorMessage => {
         this.error = errorMessage
