@@ -28,12 +28,6 @@
 .input-button-group{
   width: 120px;
 }
-.input-button:hover{
-  background-color: rgb(250, 250, 250);
-}
-.input-button:active{
-  opacity: 0.6;
-}
 
 h1 {
   margin-bottom: 30px;
